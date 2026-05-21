@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { SearchBar } from '@/components/fixture/search-bar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,8 +14,6 @@ import {
   Zap,
   Sigma,
   CheckCircle,
-  MessageCircle,
-  Lock,
 } from 'lucide-react';
 
 const easeOutExpo = [0.19, 1, 0.22, 1] as const;
@@ -38,24 +34,6 @@ const stagger = {
 };
 
 export default function HomePage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [buying, setBuying] = useState(false);
-  const [buyError, setBuyError] = useState<string | null>(null);
-
-  async function handleBuy() {
-    setBuying(true);
-    setBuyError(null);
-    try {
-      const res = await fetch('/api/checkout', { method: 'POST' });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Checkout unavailable');
-      if (data.url) window.location.href = data.url;
-    } catch (err) {
-      setBuyError(err instanceof Error ? err.message : 'Something went wrong');
-      setBuying(false);
-    }
-  }
-
   return (
     <div className="min-h-screen">
       {/* ── Hero ── */}
@@ -72,7 +50,7 @@ export default function HomePage() {
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeOutExpo } } }}
               className="flex items-center gap-3 mb-6"
             >
-              <Badge variant="premium">AI-Powered</Badge>
+              <Badge variant="premium">Open Source</Badge>
               <Badge variant="info">Dixon-Coles Engine</Badge>
             </motion.div>
             <motion.h1
@@ -86,43 +64,26 @@ export default function HomePage() {
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.1, ease: easeOutExpo } } }}
               className="text-lg sm:text-xl text-[oklch(0.55_0.018_70)] mb-10 max-w-xl leading-relaxed"
             >
-              Dixon-Coles statistical modeling + Bayesian confidence intervals + AI agent reasoning.
-              Make data-driven predictions with quantified certainty.
+              Dixon-Coles statistical modeling + Bayesian confidence intervals.
+              The Chairman's Protocol flags high-scoring match outliers with layered qualitative filters.
+              No external API keys required.
             </motion.p>
-
-            {/* Search */}
-            <motion.div
-              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.2, ease: easeOutExpo } } }}
-              className="max-w-lg mb-10"
-            >
-              <SearchBar
-                onSearch={(q) => {
-                  setSearchQuery(q);
-                  window.location.href = `/search?q=${encodeURIComponent(q)}`;
-                }}
-              />
-            </motion.div>
 
             <motion.div
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.3, ease: easeOutExpo } } }}
               className="flex items-center gap-4 flex-wrap"
             >
-              <Button size="lg" variant="emerald" onClick={handleBuy} disabled={buying}>
-                {buying ? 'Opening Stripe...' : (
-                  <>
-                    Chairman's Picks on Telegram
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </>
-                )}
-              </Button>
-              <Link href="/search">
-                <Button variant="outline" size="lg">
-                  Browse Fixtures
+              <Link href="https://github.com/shuxincode/varview-club" target="_blank">
+                <Button size="lg" variant="emerald">
+                  View on GitHub
+                  <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </Link>
-              {buyError && (
-                <p className="w-full text-xs text-red-600">{buyError}</p>
-              )}
+              <Link href="https://github.com/shuxincode/varview-club#getting-started" target="_blank">
+                <Button variant="outline" size="lg">
+                  Getting Started
+                </Button>
+              </Link>
             </motion.div>
           </motion.div>
         </div>
@@ -154,7 +115,6 @@ export default function HomePage() {
           </motion.p>
         </motion.div>
 
-        {/* Asymmetric 2-1-1 grid (taste: avoid centered symmetry) */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -162,7 +122,6 @@ export default function HomePage() {
           variants={stagger}
           className="grid grid-cols-1 md:grid-cols-12 gap-5"
         >
-          {/* Pillar 1 — wide */}
           <motion.div
             variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeOutQuart } } }}
             className="md:col-span-7"
@@ -178,7 +137,6 @@ export default function HomePage() {
             </Card>
           </motion.div>
 
-          {/* Pillar 2 — narrow */}
           <motion.div
             variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeOutQuart } } }}
             className="md:col-span-5"
@@ -194,7 +152,6 @@ export default function HomePage() {
             </Card>
           </motion.div>
 
-          {/* Pillar 3 — narrow */}
           <motion.div
             variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeOutQuart } } }}
             className="md:col-span-5"
@@ -210,7 +167,6 @@ export default function HomePage() {
             </Card>
           </motion.div>
 
-          {/* Pillar 4 — wide */}
           <motion.div
             variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeOutQuart } } }}
             className="md:col-span-7"
@@ -274,10 +230,10 @@ export default function HomePage() {
               },
               {
                 icon: Zap,
-                title: 'AI Agent Trio',
-                desc: "Analyst A (tactical) + Analyst B (intel) + Chairman (arbiter). The Chairman's Blue Tick is the final seal of approval.",
+                title: "Chairman's Protocol",
+                desc: '10-signature stack + 8-veto list + composite confidence gate. Flags over-4.5 goal outliers with transparent reasoning.',
                 stat: '3',
-                statLabel: 'AI agents',
+                statLabel: 'Pipeline stages',
                 iconBg: 'bg-[oklch(0.9_0.08_80/0.3)]',
                 iconColor: 'text-[oklch(0.55_0.15_80)]',
               },
@@ -305,48 +261,35 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Telegram Access CTA ── */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: '-80px' }}
-        variants={stagger}
-        className="border-t border-[oklch(0.85_0.012_75/0.5)] py-24"
-      >
+      {/* ── API Demo ── */}
+      <section className="border-t border-[oklch(0.85_0.012_75/0.5)] py-24">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-          <motion.div variants={fadeUp} custom={0} className="max-w-xl">
-            <h2 className="text-[clamp(1.5rem,3.5vw,2.5rem)] font-bold text-[oklch(0.22_0.025_260)] mb-3 tracking-tight">
-              Chairman's Picks on{' '}
-              <span className="text-[oklch(0.45_0.18_265)]">Telegram</span>
-            </h2>
-            <p className="text-[oklch(0.55_0.018_70)] mb-8 text-lg">
-              One-time payment. Lifetime access. The Chairman's over-4.5 goal outliers delivered directly to your DM.
-            </p>
-          </motion.div>
-          <motion.div variants={fadeUp} custom={2} className="flex items-center gap-4 flex-wrap">
-            <Button
-              size="lg"
-              variant="emerald"
-              onClick={handleBuy}
-              disabled={buying}
-            >
-              {buying ? 'Opening Stripe...' : (
-                <>
-                  Get Access — $89
-                  <MessageCircle className="h-4 w-4 ml-2" />
-                </>
-              )}
-            </Button>
-            <div className="flex items-center gap-2 text-xs text-[oklch(0.55_0.018_70)]">
-              <Lock className="h-3 w-3" />
-              <span>Secure payment via Stripe</span>
-            </div>
-            {buyError && (
-              <p className="w-full text-xs text-red-600">{buyError}</p>
-            )}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+            variants={stagger}
+            className="max-w-2xl"
+          >
+            <motion.h2 variants={fadeUp} className="text-[clamp(1.5rem,3.5vw,2.5rem)] font-bold text-[oklch(0.22_0.025_260)] mb-3 tracking-tight">
+              Try the <span className="text-[oklch(0.45_0.18_265)]">API</span>
+            </motion.h2>
+            <motion.p variants={fadeUp} className="text-[oklch(0.55_0.018_70)] mb-6 text-lg">
+              No API keys, no signup, no database. Just a <code className="text-sm bg-[oklch(0.45_0.18_265/0.08)] px-2 py-0.5 rounded">curl</code> command:
+            </motion.p>
+            <motion.div variants={fadeUp}>
+              <pre className="bg-[oklch(0.22_0.025_260)] text-[oklch(0.85_0.012_75)] rounded-2xl p-6 overflow-x-auto text-sm leading-relaxed">
+{`curl -X POST http://localhost:3000/api/chairman/outliers \
+  -H "Content-Type: application/json" \
+  -d '{"homeTeam":"Manchester City","awayTeam":"Luton Town","leagueName":"Premier League"}'`}
+              </pre>
+            </motion.div>
+            <motion.p variants={fadeUp} className="mt-4 text-sm text-[oklch(0.55_0.018_70)]">
+              Returns a full ChairmanOutlierReport with signatures, vetos, composite confidence, and priority ranking.
+            </motion.p>
           </motion.div>
         </div>
-      </motion.section>
+      </section>
     </div>
   );
 }

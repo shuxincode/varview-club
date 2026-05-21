@@ -1,8 +1,10 @@
 # varview-club
 
-**Soccer prediction engine using Dixon-Coles bivariate Poisson modeling and the Chairman's Protocol — a multi-agent outlier detection system for high-scoring matches.**
+**Soccer prediction engine using Dixon-Coles bivariate Poisson modeling and the Chairman's Protocol — an outlier detection system for high-scoring matches.**
 
 Built on statistical modeling (Dixon & Coles, 1997) with a layered qualitative filter for identifying matches with elevated probability of exceeding 4.5 total goals.
+
+Zero external dependencies required. No API keys, no database, no signup — clone and run.
 
 ## Table of Contents
 
@@ -12,7 +14,7 @@ Built on statistical modeling (Dixon & Coles, 1997) with a layered qualitative f
 - [Getting Started](#getting-started)
 - [Project Structure](#project-structure)
 - [Configuration](#configuration)
-- [CI/CD Harness](#cicd-harness)
+- [API Reference](#api-reference)
 - [License](#license)
 
 ---
@@ -43,15 +45,15 @@ The engine computes match outcome probabilities from team strength ratings using
 
 ## The Chairman's Protocol
 
-The Chairman's Protocol is a multi-agent system that screens matches for over-4.5 goal outlier potential. It runs alongside the core 4-pillar model as an independent analytical layer.
+The Chairman's Protocol screens matches for over-4.5 goal outlier potential. It runs alongside the core 4-pillar model as an independent analytical layer.
 
 ### 3 Analyst Archetypes
 
 | Analyst | Role | Data Source |
 |---------|------|-------------|
-| **Statistician** | Quantitative form analysis (xG, H2H averages, goal rates) | AI web search via OpenRouter + synthetic fallback from team ratings |
-| **Scout** | Tactical profile, player quality, morale, absences | AI web search + synthetic defaults |
-| **Observer** | Environment (weather, venue, travel, referee, competition context) | AI web search + synthetic defaults |
+| **Statistician** | Quantitative form analysis (xG, H2H averages, goal rates) | Synthetic from built-in team ratings |
+| **Scout** | Tactical profile, player quality, morale, absences | Synthetic default profiles |
+| **Observer** | Environment (weather, venue, travel, referee, competition context) | Synthetic defaults |
 
 ### Pipeline Stages
 
@@ -79,8 +81,6 @@ Fixture Input
 ```
 
 ### Signature Stack — 10 Conditions
-
-The signature stack evaluates qualitative signals that increase the likelihood of a high-scoring match:
 
 | ID | Condition | Threshold |
 |----|-----------|-----------|
@@ -137,12 +137,11 @@ Urgency score depends on time to kickoff (2–10 scale). Conviction score is com
 ### Prerequisites
 
 - Node.js 18+
-- npm
 
 ### Install
 
 ```bash
-git clone https://github.com/<your-org>/varview-club.git
+git clone https://github.com/shuxincode/varview-club.git
 cd varview-club
 npm install
 ```
@@ -150,15 +149,19 @@ npm install
 ### Run
 
 ```bash
-npm run dev        # Start development server
+npm run dev        # Start development server at http://localhost:3000
 npm run build      # Production build
 npm run lint       # Run ESLint
 npx tsc --noEmit   # Type check
 ```
 
-### API
+---
 
-**Chairman's Protocol outlier detection:**
+## API Reference
+
+### POST /api/chairman/outliers
+
+Returns a full ChairmanOutlierReport with signature stack results, veto status, composite confidence, priority ranking, and detailed reasoning.
 
 ```bash
 curl -X POST http://localhost:3000/api/chairman/outliers \
@@ -166,7 +169,37 @@ curl -X POST http://localhost:3000/api/chairman/outliers \
   -d '{"homeTeam":"Manchester City","awayTeam":"Luton Town","leagueName":"Premier League"}'
 ```
 
-Returns a `ChairmanOutlierReport` with signature stack results, veto status, composite confidence, priority ranking, and detailed reasoning.
+**Response:**
+
+```json
+{
+  "fixture": { "homeTeam": "Manchester City", "awayTeam": "Luton Town", "league": "Premier League" },
+  "status": "FLAGGED",
+  "statusReason": "High-confidence outlier: all gates passed with strong conviction",
+  "lambdaHome": 2.45,
+  "lambdaAway": 1.32,
+  "totalLambda": 3.77,
+  "probOver4_5": 0.42,
+  "signatures": {
+    "conditions": [...],
+    "totalPassed": 7,
+    "totalConditions": 10
+  },
+  "vetos": { "vetos": [...], "hardVetoCount": 0, "softVetoCount": 1 },
+  "confidence": {
+    "compositeConfidence": 0.78,
+    "confidenceLabel": "FLAGGED",
+    "gate1Score": 0.91,
+    "gate2Score": 0.70,
+    "gate3Score": 0.50,
+    "gate4Score": 0.90
+  },
+  "priority": { "priorityScore": 7.1, "tier": "HIGH" },
+  "primaryDrivers": [...],
+  "primaryRisks": [...],
+  "reasoningSummary": "..."
+}
+```
 
 ---
 
@@ -183,7 +216,7 @@ src/
 │   │   ├── veto-list.ts               # 8 disqualification checks
 │   │   ├── composite-confidence.ts    # Weighted confidence formula
 │   │   ├── priority-ranking.ts        # Urgency × conviction scoring
-│   │   ├── analyst-data.ts            # 3 async analysts (AI + fallback)
+│   │   ├── analyst-data.ts            # 3 synthetic analysts
 │   │   └── chairman-synthesis.ts      # Pipeline orchestrator
 │   └── agents/
 │       ├── team-ratings.ts            # 100+ team strength ratings
@@ -217,19 +250,6 @@ Thresholds and weights are defined in [src/lib/chairman-protocol/constants.ts](s
 | `SIG_MIN_SCORE` | 7 | Minimum signatures for full gate 2 score |
 
 Team strength ratings are in [src/lib/agents/team-ratings.ts](src/lib/agents/team-ratings.ts) covering 100+ teams across 20+ leagues.
-
----
-
-## CI/CD Harness
-
-The [harness](harness/) directory contains a portable, single-file CI/CD control dashboard. Open `harness/index.html` in any browser to:
-
-- Run a visual pipeline (lint → typecheck → test → build → e2e → ready)
-- View live telemetry metrics
-- Interact via the terminal interface
-- Switch between project configurations
-
-The harness is generic — add your own project config to `HARNESS_CONFIG` in the file.
 
 ---
 
