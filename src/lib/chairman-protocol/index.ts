@@ -9,18 +9,18 @@ export type { VetoInput } from './veto-list';
 export { computeCompositeConfidence } from './composite-confidence';
 export type { ConfidenceInput } from './composite-confidence';
 
-export { computePriorityRanking } from './priority-ranking';
-export type { PriorityInput } from './priority-ranking';
+export { computeRelevanceIndex } from './relevance-index';
+export type { RelevanceInput } from './relevance-index';
 
 export { analyzeStatistician, analyzeScout, analyzeObserver, runAllAnalysts } from './analyst-data';
 
 export { synthesizeOutlierReport } from './chairman-synthesis';
 
 export {
-  FLAGGED_THRESHOLD,
-  WATCH_THRESHOLD,
+  ELEVATED_THRESHOLD,
+  MODERATE_THRESHOLD,
   POISSON_P_OVER_45_THRESHOLD,
-  MARKET_EDGE_THRESHOLD,
+  MODEL_SPREAD_THRESHOLD,
   GATE1_WEIGHT,
   GATE2_WEIGHT,
   GATE3_WEIGHT,

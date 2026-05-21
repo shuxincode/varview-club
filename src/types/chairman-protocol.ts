@@ -125,17 +125,17 @@ export interface ConfidenceComponents {
   baseConfidence: number; // from P(over4.5)
   gate1Score: number; // Poisson gate (35% weight)
   gate2Score: number; // Signature stack (30% weight)
-  gate3Score: number; // Market edge (25% weight)
+  gate3Score: number; // Model spread (25% weight)
   gate4Score: number; // Veto multiplier (10% weight)
   compositeConfidence: number; // final 0-1
-  confidenceLabel: 'FLAGGED' | 'WATCH' | 'PASS';
+  confidenceLabel: 'ELEVATED' | 'MODERATE' | 'BASELINE';
 }
 
-// ---- Priority Ranking (Section VI) ----
+// ---- Relevance Index (Section VI) ----
 
-export interface PriorityRanking {
-  priorityScore: number; // 0-10
-  tier: 'ELITE' | 'HIGH' | 'MEDIUM' | 'LOW';
+export interface RelevanceIndex {
+  relevanceScore: number; // 0-10
+  tier: 'STRONG' | 'ELEVATED' | 'MODERATE' | 'LOW';
 }
 
 // ---- Match Context Modifiers ----
@@ -159,7 +159,7 @@ export interface FixtureSummary {
 
 export interface ChairmanOutlierReport {
   fixture: FixtureSummary;
-  status: 'FLAGGED' | 'WATCH' | 'PASS';
+  status: 'ELEVATED' | 'MODERATE' | 'BASELINE';
   statusReason: string;
 
   // Core stats
@@ -167,14 +167,14 @@ export interface ChairmanOutlierReport {
   lambdaAway: number;
   totalLambda: number;
   probOver4_5: number;
-  marketImpliedProb: number;
-  marketEdge: number; // percentage points
+  referenceProb: number;
+  modelSpread: number; // percentage points
 
   // Pipeline results
   signatures: SignatureStackResult;
   vetos: VetoResult;
   confidence: ConfidenceComponents;
-  priority: PriorityRanking;
+  relevance: RelevanceIndex;
 
   // Analyst inputs
   statistician: AnalystAssessment;

@@ -1,8 +1,8 @@
 // ===== Chairman's Protocol: Constants & Thresholds =====
 
 // --- Confidence Thresholds ---
-export const FLAGGED_THRESHOLD = 0.75;
-export const WATCH_THRESHOLD = 0.60;
+export const ELEVATED_THRESHOLD = 0.75;
+export const MODERATE_THRESHOLD = 0.60;
 
 // --- Gate 1: Poisson Threshold ---
 export const POISSON_P_OVER_45_THRESHOLD = 0.42;
@@ -18,8 +18,8 @@ export const SIG_ABSENCE_XG_THRESHOLD = 0.40; // xG lost from defensive absences
 export const SIG_REF_PENALTY_THRESHOLD = 0.30; // penalties per match
 export const SIG_MIN_SCORE = 7; // minimum points for 75% flag
 
-// --- Market Edge ---
-export const MARKET_EDGE_THRESHOLD = 0.12; // +12 percentage points
+// --- Model Spread ---
+export const MODEL_SPREAD_THRESHOLD = 0.12; // +12 percentage points
 
 // --- Weather Veto ---
 export const VETO_WIND_MAX = 35; // kph
@@ -62,7 +62,7 @@ export const DEFAULT_LEAGUE_GOAL_RATE = 2.60;
 // --- Composite Confidence Weights (Section VIII) ---
 export const GATE1_WEIGHT = 0.35; // Poisson P(over4.5)
 export const GATE2_WEIGHT = 0.30; // Signature stack
-export const GATE3_WEIGHT = 0.25; // Market edge
+export const GATE3_WEIGHT = 0.25; // Model spread
 export const GATE4_WEIGHT = 0.10; // Veto multiplier
 
 // --- Signature Condition Definitions ---

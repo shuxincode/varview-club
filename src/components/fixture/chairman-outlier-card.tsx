@@ -80,11 +80,11 @@ export function ChairmanOutlierCard({
     );
   }
 
-  const isFlagged = report.status === 'FLAGGED';
-  const isWatch = report.status === 'WATCH';
-  const statusColors = isFlagged
+  const isElevated = report.status === 'ELEVATED';
+  const isModerate = report.status === 'MODERATE';
+  const statusColors = isElevated
     ? 'border-[oklch(0.62_0.18_160/0.5)] shadow-[0_0_24px_oklch(0.62_0.18_160/0.15)]'
-    : isWatch
+    : isModerate
       ? 'border-[oklch(0.55_0.15_80/0.3)]'
       : 'border-[oklch(0.85_0.012_75)]';
 
@@ -116,16 +116,16 @@ export function ChairmanOutlierCard({
               <div
                 className={cn(
                   'rounded-full p-2.5',
-                  isFlagged
+                  isElevated
                     ? 'bg-[oklch(0.62_0.18_160/0.12)]'
-                    : isWatch
+                    : isModerate
                       ? 'bg-[oklch(0.55_0.15_80/0.12)]'
                       : 'bg-[oklch(0.85_0.012_75/0.5)]',
                 )}
               >
-                {isFlagged ? (
+                {isElevated ? (
                   <TrendingUp className="h-6 w-6 text-[oklch(0.62_0.18_160)]" />
-                ) : isWatch ? (
+                ) : isModerate ? (
                   <AlertTriangle className="h-6 w-6 text-[oklch(0.55_0.15_80)]" />
                 ) : (
                   <Shield className="h-6 w-6 text-[oklch(0.55_0.018_70)]" />
@@ -136,16 +136,16 @@ export function ChairmanOutlierCard({
                   <span
                     className={cn(
                       'text-lg font-bold',
-                      isFlagged
+                      isElevated
                         ? 'text-[oklch(0.62_0.18_160)]'
-                        : isWatch
+                        : isModerate
                           ? 'text-[oklch(0.55_0.15_80)]'
                           : 'text-[oklch(0.55_0.018_70)]',
                     )}
                   >
                     {report.status}
                   </span>
-                  {isFlagged && (
+                  {isElevated && (
                     <Badge variant="premium" className="text-[10px] tracking-wider">
                       OUTLIER
                     </Badge>
@@ -156,20 +156,20 @@ export function ChairmanOutlierCard({
             </div>
             <div className="text-right">
               <Badge
-                variant={isFlagged ? 'premium' : 'default'}
+                variant={isElevated ? 'premium' : 'default'}
                 className={cn(
                   'text-[11px] tracking-wider',
-                  !isFlagged && 'text-[oklch(0.55_0.018_70)]',
+                  !isElevated && 'text-[oklch(0.55_0.018_70)]',
                 )}
               >
                 {(report.confidence.compositeConfidence * 100).toFixed(0)}% CONFIDENCE
               </Badge>
               <div className="mt-1">
                 <Badge
-                  variant={report.priority.tier === 'ELITE' ? 'premium' : 'default'}
+                  variant={report.relevance.tier === 'STRONG' ? 'premium' : 'default'}
                   className="text-[9px]"
                 >
-                  {report.priority.tier} PRIORITY ({report.priority.priorityScore.toFixed(1)})
+                  {report.relevance.tier} RELEVANCE ({report.relevance.relevanceScore.toFixed(1)})
                 </Badge>
               </div>
             </div>
@@ -189,7 +189,7 @@ export function ChairmanOutlierCard({
             <span className="font-semibold">
               P(over4.5) = {(report.probOver4_5 * 100).toFixed(1)}%
             </span>
-            <span>Edge: {report.marketEdge > 0 ? '+' : ''}{report.marketEdge.toFixed(1)}pp</span>
+            <span>Spread: {report.modelSpread > 0 ? '+' : ''}{report.modelSpread.toFixed(1)}pp</span>
           </div>
 
           {/* Signatures row */}
@@ -200,7 +200,7 @@ export function ChairmanOutlierCard({
                 Signatures
               </span>
               <Badge
-                variant={report.confidence.confidenceLabel !== 'PASS' ? 'premium' : 'default'}
+                variant={report.confidence.confidenceLabel !== 'BASELINE' ? 'premium' : 'default'}
                 className="text-[9px] ml-auto"
               >
                 {totalPassed}/{report.signatures.conditions.length}
@@ -258,7 +258,7 @@ export function ChairmanOutlierCard({
             {[
               { label: 'Poisson', score: report.confidence.gate1Score, pct: 35 },
               { label: 'Signatures', score: report.confidence.gate2Score, pct: 30 },
-              { label: 'Market Edge', score: report.confidence.gate3Score, pct: 25 },
+              { label: 'Model Spread', score: report.confidence.gate3Score, pct: 25 },
               { label: 'Veto Gate', score: report.confidence.gate4Score, pct: 10 },
             ].map((gate) => (
               <div key={gate.label} className="text-center">

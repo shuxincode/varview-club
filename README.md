@@ -39,7 +39,7 @@ Team Ratings          Dixon-Coles             4 Pillars
                   └─────────────────────┘
 ```
 
-The engine computes match outcome probabilities from team strength ratings using the Dixon-Coles bivariate Poisson distribution. The Chairman's Protocol adds a qualitative layer that evaluates 10 signature conditions and 8 veto criteria against each match to flag high-confidence over-4.5 goal outliers.
+The engine computes match outcome probabilities from team strength ratings using the Dixon-Coles bivariate Poisson distribution. The Chairman's Protocol adds a qualitative layer that evaluates 10 signature conditions and 8 veto criteria against each match to identify high-probability over-4.5 goal outcomes.
 
 ---
 
@@ -74,10 +74,10 @@ Fixture Input
   │
   ├─► Composite Confidence ────────────► Weighted formula (35/30/25/10)
   │
-  └─► Priority Ranking ────────────────► urgencyScore × convictionScore / 10
+  └─► Relevance Index ────────────────► proximityScore × signalScore / 10
        │
        ▼
-  FLAGGED (≥0.75) / WATCH (0.60–0.74) / PASS (<0.60)
+  ELEVATED (≥0.75) / MODERATE (0.60–0.74) / BASELINE (<0.60)
 ```
 
 ### Signature Stack — 10 Conditions
@@ -118,17 +118,17 @@ confidence = (gate1Score × 0.35) + (gate2Score × 0.30) + (gate3Score × 0.25) 
 |------|--------|-----------|---------|
 | Gate 1 | 35% | Poisson P(over4.5) | min(1.0, prob / 0.42) |
 | Gate 2 | 30% | Signature stack | passRate (halved if < 7 passed) |
-| Gate 3 | 25% | Market edge | min(1.0, edge / 12pp) |
+| Gate 3 | 25% | Model spread | min(1.0, spread / 12pp) |
 | Gate 4 | 10% | Veto multiplier | 0 if vetoed, else multiplier |
 
-### Priority Ranking
+### Relevance Index
 
 ```
-priorityScore = urgencyScore × convictionScore / 10
-tier: ELITE (≥7) | HIGH (≥5) | MEDIUM (≥3) | LOW
+relevanceScore = proximityScore × signalScore / 10
+tier: STRONG (≥7) | ELEVATED (≥5) | MODERATE (≥3) | LOW
 ```
 
-Urgency score depends on time to kickoff (2–10 scale). Conviction score is composite confidence × 10.
+Proximity score depends on time to kickoff (2–10 scale). Signal score is composite confidence × 10.
 
 ---
 
@@ -161,7 +161,7 @@ npx tsc --noEmit   # Type check
 
 ### POST /api/chairman/outliers
 
-Returns a full ChairmanOutlierReport with signature stack results, veto status, composite confidence, priority ranking, and detailed reasoning.
+Returns a full ChairmanOutlierReport with signature stack results, veto status, composite confidence, relevance index, and detailed reasoning.
 
 ```bash
 curl -X POST http://localhost:3000/api/chairman/outliers \
@@ -174,8 +174,8 @@ curl -X POST http://localhost:3000/api/chairman/outliers \
 ```json
 {
   "fixture": { "homeTeam": "Manchester City", "awayTeam": "Luton Town", "league": "Premier League" },
-  "status": "FLAGGED",
-  "statusReason": "High-confidence outlier: all gates passed with strong conviction",
+  "status": "ELEVATED",
+  "statusReason": "Elevated probability: all gates passed with strong signal",
   "lambdaHome": 2.45,
   "lambdaAway": 1.32,
   "totalLambda": 3.77,
@@ -188,13 +188,13 @@ curl -X POST http://localhost:3000/api/chairman/outliers \
   "vetos": { "vetos": [...], "hardVetoCount": 0, "softVetoCount": 1 },
   "confidence": {
     "compositeConfidence": 0.78,
-    "confidenceLabel": "FLAGGED",
+    "confidenceLabel": "ELEVATED",
     "gate1Score": 0.91,
     "gate2Score": 0.70,
     "gate3Score": 0.50,
     "gate4Score": 0.90
   },
-  "priority": { "priorityScore": 7.1, "tier": "HIGH" },
+  "relevance": { "relevanceScore": 7.1, "tier": "STRONG" },
   "primaryDrivers": [...],
   "primaryRisks": [...],
   "reasoningSummary": "..."
@@ -215,7 +215,7 @@ src/
 │   │   ├── signature-stack.ts         # 10-condition qualitative filter
 │   │   ├── veto-list.ts               # 8 disqualification checks
 │   │   ├── composite-confidence.ts    # Weighted confidence formula
-│   │   ├── priority-ranking.ts        # Urgency × conviction scoring
+│   │   ├── relevance-index.ts         # Proximity × signal scoring
 │   │   ├── analyst-data.ts            # 3 synthetic analysts
 │   │   └── chairman-synthesis.ts      # Pipeline orchestrator
 │   └── agents/
@@ -227,7 +227,7 @@ src/
 │   └── api/chairman/outliers/         # POST endpoint
 └── components/
     └── fixture/
-        ├── chairman-outlier-card.tsx   # FLAGGED/WATCH/PASS UI card
+        ├── chairman-outlier-card.tsx   # ELEVATED/MODERATE/BASELINE UI card
         └── chairman-goals-band-card.tsx
 ```
 
@@ -239,13 +239,13 @@ Thresholds and weights are defined in [src/lib/chairman-protocol/constants.ts](s
 
 | Constant | Value | Description |
 |----------|-------|-------------|
-| `FLAGGED_THRESHOLD` | 0.75 | Composite confidence for FLAGGED status |
-| `WATCH_THRESHOLD` | 0.60 | Composite confidence for WATCH status |
+| `ELEVATED_THRESHOLD` | 0.75 | Composite confidence for ELEVATED status |
+| `MODERATE_THRESHOLD` | 0.60 | Composite confidence for MODERATE status |
 | `POISSON_P_OVER_45_THRESHOLD` | 0.42 | Gate 1 scoring reference point |
-| `MARKET_EDGE_THRESHOLD` | 0.12 | Gate 3 reference (+12pp) |
+| `MODEL_SPREAD_THRESHOLD` | 0.12 | Gate 3 reference (+12pp) |
 | `GATE1_WEIGHT` | 0.35 | Poisson score weight |
 | `GATE2_WEIGHT` | 0.30 | Signature weight |
-| `GATE3_WEIGHT` | 0.25 | Market edge weight |
+| `GATE3_WEIGHT` | 0.25 | Model spread weight |
 | `GATE4_WEIGHT` | 0.10 | Veto multiplier weight |
 | `SIG_MIN_SCORE` | 7 | Minimum signatures for full gate 2 score |
 

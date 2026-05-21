@@ -65,7 +65,7 @@ export default function HomePage() {
               className="text-lg sm:text-xl text-[oklch(0.55_0.018_70)] mb-10 max-w-xl leading-relaxed"
             >
               Dixon-Coles statistical modeling + Bayesian confidence intervals.
-              The Chairman's Protocol flags high-scoring match outliers with layered qualitative filters.
+              The Chairman's Protocol identifies high-scoring match outliers with layered qualitative filters.
               No external API keys required.
             </motion.p>
 
@@ -285,7 +285,7 @@ export default function HomePage() {
               </pre>
             </motion.div>
             <motion.p variants={fadeUp} className="mt-4 text-sm text-[oklch(0.55_0.018_70)]">
-              Returns a full ChairmanOutlierReport with signatures, vetos, composite confidence, and priority ranking.
+              Returns a full ChairmanOutlierReport with signatures, vetos, composite confidence, and relevance index.
             </motion.p>
           </motion.div>
         </div>

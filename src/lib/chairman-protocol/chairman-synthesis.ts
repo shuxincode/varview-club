@@ -11,8 +11,8 @@ import { evaluateVetos } from './veto-list';
 import type { VetoInput } from './veto-list';
 import { computeCompositeConfidence } from './composite-confidence';
 import type { ConfidenceInput } from './composite-confidence';
-import { computePriorityRanking } from './priority-ranking';
-import type { PriorityInput } from './priority-ranking';
+import { computeRelevanceIndex } from './relevance-index';
+import type { RelevanceInput } from './relevance-index';
 import { LEAGUE_BASE_GOAL_RATES, DEFAULT_LEAGUE_GOAL_RATE } from './constants';
 
 // ============================================================
@@ -182,15 +182,15 @@ export async function synthesizeOutlierReport(
     probOver4_5,
     signaturePassRate: signatures.passRate,
     signatureTotalPassed: signatures.totalPassed,
-    marketEdge: 0, // neutral — no odds API
+    modelSpread: 0, // neutral — no reference probability source
     isVetoed: vetos.isVetoed,
     vetoEffectiveMultiplier: vetos.effectiveMultiplier,
   };
 
   const confidence = computeCompositeConfidence(confidenceInput);
 
-  // Step 10: Build priority input
-  const priorityInput: PriorityInput = {
+  // Step 10: Build relevance input
+  const relevanceInput: RelevanceInput = {
     compositeConfidence: confidence.compositeConfidence,
     probOver4_5,
     closenessToKickoffHours: 48, // default — caller can override
@@ -201,11 +201,11 @@ export async function synthesizeOutlierReport(
     isLiveMatch: false,
   };
 
-  const priority = computePriorityRanking(priorityInput);
+  const relevance = computeRelevanceIndex(relevanceInput);
 
-  // Step 11: Compute market-implied probability (neutral when no odds API)
-  const marketImpliedProb = 0.15;
-  const marketEdge = (probOver4_5 - marketImpliedProb) * 100;
+  // Step 11: Compute reference probability (neutral when no external data source)
+  const referenceProb = 0.15;
+  const modelSpread = (probOver4_5 - referenceProb) * 100;
 
   // Step 12: Derive drivers and risks
   const primaryDrivers: string[] = [];
@@ -246,29 +246,29 @@ export async function synthesizeOutlierReport(
     `Signatures: ${signatures.totalPassed}/${signatures.totalConditions} passed (${(signatures.passRate * 100).toFixed(0)}%).`,
     vetos.isVetoed ? `VETOED (${vetos.hardVetoCount} hard + ${vetos.softVetoCount} soft).` : `${vetos.softVetoCount} soft vetoes, no hard vetoes.`,
     `Composite confidence: ${(confidence.compositeConfidence * 100).toFixed(1)}% → ${confidence.confidenceLabel}.`,
-    `Priority: ${priority.tier} (${priority.priorityScore.toFixed(1)}/10).`,
+    `Relevance: ${relevance.tier} (${relevance.relevanceScore.toFixed(1)}/10).`,
   ].join(' ');
 
   return {
     fixture: { homeTeam, awayTeam, league },
     status: confidence.confidenceLabel,
-    statusReason: confidence.confidenceLabel === 'FLAGGED'
-      ? 'High-confidence outlier: all gates passed with strong conviction'
-      : confidence.confidenceLabel === 'WATCH'
-      ? 'Moderate-confidence candidate: some gates passed, monitor closely'
-      : 'Low confidence: insufficient signal for over-4.5 outlier flag',
+    statusReason: confidence.confidenceLabel === 'ELEVATED'
+      ? 'Elevated probability: all gates passed with strong signal'
+      : confidence.confidenceLabel === 'MODERATE'
+      ? 'Moderate probability: some gates passed, additional factors at play'
+      : 'Baseline probability: insufficient signal for elevated status',
 
     lambdaHome,
     lambdaAway,
     totalLambda,
     probOver4_5,
-    marketImpliedProb,
-    marketEdge,
+    referenceProb,
+    modelSpread,
 
     signatures,
     vetos,
     confidence,
-    priority,
+    relevance,
 
     statistician: analysts.statistician,
     scout: analysts.scout,
