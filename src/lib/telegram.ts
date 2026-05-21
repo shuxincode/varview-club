@@ -1,7 +1,9 @@
-const TG_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
+function tgApi() {
+  return `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
+}
 
 export async function sendTelegramMessage(chatId: number, text: string) {
-  const res = await fetch(`${TG_API}/sendMessage`, {
+  const res = await fetch(`${tgApi()}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -15,7 +17,7 @@ export async function sendTelegramMessage(chatId: number, text: string) {
 }
 
 export async function setTelegramWebhook(url: string, secret: string) {
-  const res = await fetch(`${TG_API}/setWebhook`, {
+  const res = await fetch(`${tgApi()}/setWebhook`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

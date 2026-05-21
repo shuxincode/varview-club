@@ -7,7 +7,8 @@ import { FixtureCard } from "@/components/fixture/fixture-card";
 import { PopularFixtures } from "@/components/fixture/popular-fixtures";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { CalendarDays, Goal, ListOrdered, Calendar, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CalendarDays, Goal, ListOrdered, Calendar, Loader2, MessageCircle, Lock } from "lucide-react";
 import { DailyTabulationCard } from "@/components/fixture/daily-tabulation-card";
 
 interface TodayFixture {
@@ -35,6 +36,23 @@ function SearchContent() {
   const [todayLoading, setTodayLoading] = useState(true);
 
   // Limit finished match results to 4 cards max
+  const [buying, setBuying] = useState(false);
+  const [buyError, setBuyError] = useState<string | null>(null);
+
+  async function handleBuy() {
+    setBuying(true);
+    setBuyError(null);
+    try {
+      const res = await fetch('/api/checkout', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Checkout unavailable');
+      if (data.url) window.location.href = data.url;
+    } catch (err) {
+      setBuyError(err instanceof Error ? err.message : 'Something went wrong');
+      setBuying(false);
+    }
+  }
+
   const displayFixtures = todayFixtures
     .slice()
     .sort((a, b) => {
@@ -105,6 +123,25 @@ function SearchContent() {
 
       <div className="mb-8">
         <SearchBar onSearch={handleSearch} loading={loading} />
+      </div>
+
+      {/* Telegram bridge CTA */}
+      <div className="mb-6 flex items-center gap-4 flex-wrap">
+        <Button size="lg" variant="emerald" onClick={handleBuy} disabled={buying}>
+          {buying ? 'Opening Stripe...' : (
+            <>
+              Chairman's Picks on Telegram
+              <MessageCircle className="h-4 w-4 ml-2" />
+            </>
+          )}
+        </Button>
+        <div className="flex items-center gap-2 text-xs text-gray-900">
+          <Lock className="h-3 w-3 text-gray-600" />
+          <span>$89 one-time &middot; Secure via Stripe</span>
+        </div>
+        {buyError && (
+          <p className="w-full text-xs text-red-600">{buyError}</p>
+        )}
       </div>
 
       {/* Today's Matches — shown prominently when no search is active */}

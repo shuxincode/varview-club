@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
 import { setTelegramWebhook } from '../src/lib/telegram';
 
 async function main() {

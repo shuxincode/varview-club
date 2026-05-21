@@ -40,14 +40,18 @@ const stagger = {
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [buying, setBuying] = useState(false);
+  const [buyError, setBuyError] = useState<string | null>(null);
 
   async function handleBuy() {
     setBuying(true);
+    setBuyError(null);
     try {
       const res = await fetch('/api/checkout', { method: 'POST' });
-      const { url } = await res.json();
-      if (url) window.location.href = url;
-    } catch {
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Checkout unavailable');
+      if (data.url) window.location.href = data.url;
+    } catch (err) {
+      setBuyError(err instanceof Error ? err.message : 'Something went wrong');
       setBuying(false);
     }
   }
@@ -103,17 +107,22 @@ export default function HomePage() {
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.3, ease: easeOutExpo } } }}
               className="flex items-center gap-4 flex-wrap"
             >
-              <Link href="/pricing">
-                <Button size="lg" variant="emerald">
-                  View Pricing
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              </Link>
+              <Button size="lg" variant="emerald" onClick={handleBuy} disabled={buying}>
+                {buying ? 'Opening Stripe...' : (
+                  <>
+                    Chairman's Picks on Telegram
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </>
+                )}
+              </Button>
               <Link href="/search">
                 <Button variant="outline" size="lg">
                   Browse Fixtures
                 </Button>
               </Link>
+              {buyError && (
+                <p className="w-full text-xs text-red-600">{buyError}</p>
+              )}
             </motion.div>
           </motion.div>
         </div>
@@ -332,6 +341,9 @@ export default function HomePage() {
               <Lock className="h-3 w-3" />
               <span>Secure payment via Stripe</span>
             </div>
+            {buyError && (
+              <p className="w-full text-xs text-red-600">{buyError}</p>
+            )}
           </motion.div>
         </div>
       </motion.section>
