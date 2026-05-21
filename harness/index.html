@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harness · CI/CD Control Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --accent: #22c55e;
+            --accent-dim: rgba(34,197,94,0.15);
+        }
+        .glow { box-shadow: 0 0 15px rgba(34, 197, 94, 0.2); }
+        .tab-active { border-bottom: 2px solid var(--accent); color: var(--accent); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        .pipeline-step { transition: all 0.3s ease; }
+        .pulse { animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-300 font-mono selection:bg-green-500/30">
+
+<div class="max-w-6xl mx-auto p-4 md:p-8">
+    <!-- ===== Header ===== -->
+    <header class="flex flex-wrap justify-between items-center mb-8 border-b border-zinc-800 pb-4 gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-white tracking-tighter">
+                HARNESS <span class="text-green-500" id="harness-version">v0.1</span>
+            </h1>
+            <p class="text-xs text-zinc-500 mt-1 uppercase tracking-widest" id="harness-tagline">CI/CD Control Dashboard</p>
+        </div>
+        <div class="flex gap-3 items-center">
+            <select id="project-selector" class="bg-zinc-900 border border-zinc-700 text-xs text-zinc-300 px-3 py-1.5 rounded outline-none focus:border-green-500/50">
+                <option value="varview-club">varview-club</option>
+                <option value="custom">custom project</option>
+            </select>
+            <div id="pipeline-status-badge" class="px-3 py-1 bg-zinc-500/10 border border-zinc-500/50 text-zinc-500 text-xs rounded-full flex items-center gap-2">
+                <span class="relative flex h-2 w-2">
+                    <span id="pipeline-dot" class="relative inline-flex rounded-full h-2 w-2 bg-zinc-500"></span>
+                </span>
+                <span id="pipeline-status-text">IDLE</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== Pipeline Stages ===== -->
+    <section class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-sm font-bold text-zinc-500 uppercase tracking-tighter">Pipeline</h2>
+            <button id="run-pipeline-btn" onclick="runPipeline()" class="text-[10px] bg-green-500/10 border border-green-500/50 text-green-500 px-3 py-1.5 rounded hover:bg-green-500/20 transition uppercase tracking-wider">
+                ▶ Run Pipeline
+            </button>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3" id="pipeline-stages">
+            <!-- Stages injected by JS -->
+        </div>
+    </section>
+
+    <!-- ===== Main Grid ===== -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- ===== Left: Project Modules ===== -->
+        <div class="lg:col-span-4 space-y-4">
+            <h2 class="text-sm font-bold text-zinc-500 mb-2 px-1 text-xs uppercase tracking-tighter">Modules</h2>
+            <div id="module-panels">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+
+        <!-- ===== Right: Telemetry + Terminal ===== -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
+
+            <!-- Telemetry bars -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 overflow-hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xs font-bold text-white">LIVE TELEMETRY</h3>
+                    <div class="flex items-center gap-3">
+                        <div class="text-[10px] text-zinc-500">SOURCE: <span class="text-zinc-300" id="telemetry-source">LOCAL</span></div>
+                        <button id="telemetry-toggle" onclick="toggleTelemetry()" class="text-[10px] bg-green-500/10 border border-green-500/50 text-green-500 px-2 rounded uppercase tracking-wider">Start</button>
+                    </div>
+                </div>
+                <div class="flex items-end gap-1 h-32" id="metric-bars"></div>
+                <div class="flex justify-between mt-3 text-[10px] text-zinc-600">
+                    <span id="metric-latency">-- ms</span>
+                    <span id="metric-throughput">-- req/s</span>
+                    <span id="metric-errors">0 errors</span>
+                </div>
+            </div>
+
+            <!-- Terminal -->
+            <div class="bg-black border border-zinc-800 rounded-lg flex flex-col h-[420px] glow overflow-hidden">
+                <div class="flex items-center justify-between px-4 py-2 bg-zinc-900/50 border-b border-zinc-800">
+                    <div class="flex gap-1.5">
+                        <div class="w-2 h-2 rounded-full bg-red-500/50"></div>
+                        <div class="w-2 h-2 rounded-full bg-amber-500/50"></div>
+                        <div class="w-2 h-2 rounded-full bg-green-500/50"></div>
+                    </div>
+                    <span class="text-[10px] text-zinc-500 uppercase tracking-widest" id="terminal-title">harness@console</span>
+                </div>
+                <div id="terminal-output" class="flex-1 p-4 overflow-y-auto text-xs leading-relaxed font-mono space-y-1"></div>
+                <div class="p-4 border-t border-zinc-800 bg-zinc-900/20">
+                    <div class="flex gap-2">
+                        <span class="text-green-500">$</span>
+                        <input id="cmd-input" type="text" placeholder="type help for commands"
+                            class="bg-transparent border-none outline-none text-white w-full text-xs"
+                            autocomplete="off"
+                            onkeypress="handleCommand(event)">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="mt-12 border-t border-zinc-800 pt-6 flex flex-wrap gap-6 justify-between items-center text-[10px] text-zinc-600 uppercase tracking-widest">
+        <div class="flex gap-4" id="footer-versions">
+            <span>HARNESS: 0.1</span>
+            <span>NODE: --</span>
+            <span>OS: --</span>
+        </div>
+        <div>Open source · MIT License</div>
+    </footer>
+</div>
+
+<!-- ===== RBAC Modal ===== -->
+<div id="rbac-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+    <div class="bg-zinc-900 border border-red-500/50 p-6 rounded-xl max-w-md w-full shadow-2xl">
+        <div class="text-red-500 font-bold mb-2 uppercase tracking-tighter">Security: Action Denied</div>
+        <p class="text-sm text-zinc-400 mb-6 font-sans">
+            The command <span id="violation-cmd" class="font-mono text-white px-1 bg-red-500/20 rounded"></span>
+            is blocked by the harness policy controller. Destructive actions require explicit override.
+        </p>
+        <button onclick="closeModal()" class="w-full py-2 bg-red-500/10 border border-red-500/50 text-red-500 text-xs rounded hover:bg-red-500 hover:text-white transition uppercase font-bold">Acknowledge</button>
+    </div>
+</div>
+
+<script>
+// ============================================================
+//  CONFIG — Edit this block to adapt the harness to any project
+// ============================================================
+const HARNESS_CONFIG = {
+    // ---- Default project ----
+    defaultProject: 'varview-club',
+
+    // ---- Project definitions ----
+    projects: {
+        'varview-club': {
+            name: 'varview-club',
+            tagline: 'Soccer Prediction Engine · Dixon-Coles Model',
+            version: 'v0.1.0',
+            terminalTitle: 'varview@harness',
+            nodeVersion: '>=18',
+            pipelineStages: [
+                { id: 'lint',      label: 'Lint',      icon: '△', run: 'npm run lint' },
+                { id: 'typecheck', label: 'TypeCheck',  icon: '■', run: 'npx tsc --noEmit' },
+                { id: 'test',      label: 'Unit Tests', icon: '○', run: 'npm test' },
+                { id: 'build',     label: 'Build',      icon: '◇', run: 'npm run build' },
+                { id: 'e2e',       label: 'E2E Tests',  icon: '◎', run: 'npx playwright test' },
+                { id: 'ready',     label: 'Ready',      icon: '●', run: '' },
+            ],
+            modules: [
+                {
+                    id: 'chairman-protocol',
+                    label: 'Chairman Protocol',
+                    badge: 'PREDICTION',
+                    metrics: [
+                        { key: 'signatures', label: 'SIGNATURES', default: '10 conds' },
+                        { key: 'vetoes',     label: 'VETOES',     default: '8 checks' },
+                        { key: 'confidence', label: 'CONFIDENCE', default: '0–1 score' },
+                    ],
+                },
+                {
+                    id: 'dixon-coles',
+                    label: 'Dixon-Coles',
+                    badge: 'MATH',
+                    metrics: [
+                        { key: 'lambdaHome', label: 'λ HOME', default: '0.5–3.5' },
+                        { key: 'lambdaAway', label: 'λ AWAY', default: '0.3–3.0' },
+                        { key: 'rho',        label: 'ρ RHO',   default: '-0.1' },
+                    ],
+                },
+                {
+                    id: 'team-ratings',
+                    label: 'Team Ratings',
+                    badge: 'DATA',
+                    metrics: [
+                        { key: 'attack',  label: 'ATTACK',  default: '0.6–2.2' },
+                        { key: 'defense', label: 'DEFENSE', default: '0.6–2.2' },
+                        { key: 'leagues', label: 'LEAGUES', default: '30+' },
+                    ],
+                },
+                {
+                    id: 'analysts',
+                    label: 'AI Analysts',
+                    badge: 'AGENTS',
+                    metrics: [
+                        { key: 'statistician', label: 'STATS', default: 'hybrid AI' },
+                        { key: 'scout',        label: 'SCOUT', default: 'hybrid AI' },
+                        { key: 'observer',     label: 'OBSERVER', default: 'hybrid AI' },
+                    ],
+                },
+            ],
+            telemetrySource: 'NODE',
+        },
+
+        // Template for adding your own project:
+        'custom': {
+            name: 'custom',
+            tagline: 'Your Project · replace this config',
+            version: 'v0.0.1',
+            terminalTitle: 'harness@console',
+            nodeVersion: '>=18',
+            pipelineStages: [
+                { id: 'lint',      label: 'Lint',      icon: '△', run: 'npm run lint' },
+                { id: 'test',      label: 'Test',      icon: '○', run: 'npm test' },
+                { id: 'build',     label: 'Build',      icon: '◇', run: 'npm run build' },
+                { id: 'deploy',    label: 'Deploy',     icon: '●', run: '' },
+            ],
+            modules: [
+                {
+                    id: 'module-1',
+                    label: 'Module 1',
+                    badge: 'CORE',
+                    metrics: [
+                        { key: 'm1a', label: 'METRIC A', default: '--' },
+                        { key: 'm1b', label: 'METRIC B', default: '--' },
+                    ],
+                },
+                {
+                    id: 'module-2',
+                    label: 'Module 2',
+                    badge: 'TOOL',
+                    metrics: [
+                        { key: 'm2a', label: 'METRIC C', default: '--' },
+                    ],
+                },
+            ],
+            telemetrySource: 'LOCAL',
+        },
+    },
+};
+// ============================================================
+//  END CONFIG
+// ============================================================
+
+// --- State ---
+let currentProject = HARNESS_CONFIG.defaultProject;
+let telemetryInterval = null;
+let isTelemetryRunning = false;
+const terminalOutput = document.getElementById('terminal-output');
+const cmdInput = document.getElementById('cmd-input');
+
+// --- Init ---
+function init() {
+    loadProject(currentProject);
+    buildMetricBars(44);
+    log('Harness initialized. Select a project and run the pipeline.', 'info');
+    log('Type help for available commands.', 'info');
+}
+
+function loadProject(projectId) {
+    const config = HARNESS_CONFIG.projects[projectId] || HARNESS_CONFIG.projects[HARNESS_CONFIG.defaultProject];
+    currentProject = projectId;
+
+    document.getElementById('harness-version').textContent = config.version;
+    document.getElementById('harness-tagline').textContent = config.tagline;
+    document.getElementById('terminal-title').textContent = config.terminalTitle;
+    document.getElementById('telemetry-source').textContent = config.telemetrySource;
+    document.getElementById('project-selector').value = projectId;
+
+    // Footer versions
+    const fv = document.getElementById('footer-versions');
+    fv.innerHTML = `<span>HARNESS: 0.1</span><span>NODE: ${config.nodeVersion}</span><span>${projectId}: ${config.version}</span>`;
+
+    renderPipeline(config.pipelineStages);
+    renderModules(config.modules);
+    resetPipelineUI();
+    log(`Switched to project: ${projectId}`, 'success');
+}
+
+// --- Pipeline ---
+function renderPipeline(stages) {
+    const container = document.getElementById('pipeline-stages');
+    container.innerHTML = '';
+    stages.forEach((stage, i) => {
+        const div = document.createElement('div');
+        div.id = `stage-${stage.id}`;
+        div.dataset.index = i;
+        div.className = 'pipeline-step bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-center cursor-pointer hover:border-zinc-700';
+        div.innerHTML = `
+            <div class="text-lg mb-1 text-zinc-600" id="stage-icon-${stage.id}">${stage.icon}</div>
+            <div class="text-[10px] text-zinc-500 uppercase tracking-wider" id="stage-label-${stage.id}">${stage.label}</div>
+            <div class="text-[9px] mt-1 text-zinc-700" id="stage-status-${stage.id}">pending</div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function resetPipelineUI() {
+    const config = getConfig();
+    config.pipelineStages.forEach(stage => {
+        const el = document.getElementById(`stage-${stage.id}`);
+        if (!el) return;
+        el.className = 'pipeline-step bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-center cursor-pointer hover:border-zinc-700';
+        document.getElementById(`stage-icon-${stage.id}`).className = 'text-lg mb-1 text-zinc-600';
+        document.getElementById(`stage-status-${stage.id}`).textContent = 'pending';
+        document.getElementById(`stage-status-${stage.id}`).className = 'text-[9px] mt-1 text-zinc-700';
+    });
+    setPipelineStatus('IDLE', 'zinc-500');
+}
+
+async function runPipeline() {
+    const btn = document.getElementById('run-pipeline-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Running...';
+
+    const config = getConfig();
+    resetPipelineUI();
+    setPipelineStatus('RUNNING', 'amber-500');
+
+    for (let i = 0; i < config.pipelineStages.length; i++) {
+        const stage = config.pipelineStages[i];
+        const el = document.getElementById(`stage-${stage.id}`);
+        const icon = document.getElementById(`stage-icon-${stage.id}`);
+        const status = document.getElementById(`stage-status-${stage.id}`);
+
+        // Mark as running
+        el.className = 'pipeline-step bg-zinc-900 border border-amber-500/50 rounded-lg p-3 text-center cursor-pointer';
+        icon.className = 'text-lg mb-1 text-amber-500 pulse';
+        status.textContent = 'running';
+        status.className = 'text-[9px] mt-1 text-amber-500';
+
+        log(`[${stage.label}] ${stage.run || 'no-op'}`, 'cmd');
+
+        // Simulate work
+        await sleep(600 + Math.random() * 900);
+
+        // 90% pass rate
+        const passed = Math.random() < 0.9;
+        if (passed) {
+            el.className = 'pipeline-step bg-zinc-900 border border-green-500/50 rounded-lg p-3 text-center cursor-pointer';
+            icon.className = 'text-lg mb-1 text-green-500';
+            status.textContent = 'passed';
+            status.className = 'text-[9px] mt-1 text-green-500';
+            log(`[${stage.label}] passed`, 'success');
+        } else {
+            el.className = 'pipeline-step bg-zinc-900 border border-red-500/50 rounded-lg p-3 text-center cursor-pointer';
+            icon.className = 'text-lg mb-1 text-red-500';
+            status.textContent = 'failed';
+            status.className = 'text-[9px] mt-1 text-red-500';
+            log(`[${stage.label}] FAILED — aborting pipeline`, 'error');
+            setPipelineStatus('FAILED', 'red-500');
+            btn.disabled = false;
+            btn.textContent = '▶ Run Pipeline';
+            return;
+        }
+    }
+
+    setPipelineStatus('PASSED', 'green-500');
+    log('Pipeline completed successfully.', 'success');
+    btn.disabled = false;
+    btn.textContent = '▶ Run Pipeline';
+}
+
+function setPipelineStatus(text, color) {
+    const badge = document.getElementById('pipeline-status-badge');
+    const dot = document.getElementById('pipeline-dot');
+    const txt = document.getElementById('pipeline-status-text');
+    txt.textContent = text;
+    badge.className = `px-3 py-1 bg-${color}/10 border border-${color}/50 text-${color} text-xs rounded-full flex items-center gap-2`;
+    dot.className = `relative inline-flex rounded-full h-2 w-2 bg-${color}`;
+}
+
+// --- Modules ---
+function renderModules(modules) {
+    const container = document.getElementById('module-panels');
+    container.innerHTML = '';
+    modules.forEach(mod => {
+        const panel = document.createElement('div');
+        panel.className = 'bg-zinc-900 border border-zinc-800 p-4 rounded-lg';
+        let metricsHtml = '';
+        mod.metrics.forEach(m => {
+            metricsHtml += `
+                <div class="text-center p-1 bg-zinc-950 rounded border border-zinc-800">
+                    <div class="text-[9px] text-zinc-500">${m.label}</div>
+                    <div class="text-xs text-white" id="metric-${m.key}">${m.default}</div>
+                </div>
+            `;
+        });
+        panel.innerHTML = `
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-bold text-white">${mod.label}</span>
+                <span class="text-[10px] text-zinc-500">${mod.badge}</span>
+            </div>
+            <div class="grid grid-cols-${Math.min(mod.metrics.length, 3)} gap-2 mt-2">${metricsHtml}</div>
+        `;
+        container.appendChild(panel);
+    });
+}
+
+// --- Metric bars ---
+function buildMetricBar(count) {
+    const container = document.getElementById('metric-bars');
+    container.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'flex-1 bg-green-500/20 border-t-2 border-green-500 transition-all duration-100';
+        bar.style.height = '20%';
+        container.appendChild(bar);
+    }
+}
+
+function toggleTelemetry() {
+    const btn = document.getElementById('telemetry-toggle');
+    isTelemetryRunning = !isTelemetryRunning;
+    if (isTelemetryRunning) {
+        btn.textContent = 'Stop';
+        btn.className = 'text-[10px] bg-red-500/10 border border-red-500/50 text-red-500 px-2 rounded uppercase tracking-wider';
+        startTelemetry();
+    } else {
+        btn.textContent = 'Start';
+        btn.className = 'text-[10px] bg-green-500/10 border border-green-500/50 text-green-500 px-2 rounded uppercase tracking-wider';
+        clearInterval(telemetryInterval);
+        log('Telemetry stream stopped.', 'info');
+    }
+}
+
+function startTelemetry() {
+    log('Telemetry stream started.', 'success');
+    telemetryInterval = setInterval(() => {
+        const bars = document.getElementById('metric-bars').children;
+        const latency = Math.floor(Math.random() * 45) + 5;
+        document.getElementById('metric-latency').textContent = `${latency} ms`;
+        document.getElementById('metric-throughput').textContent = `${Math.floor(Math.random() * 200 + 50)} req/s`;
+        document.getElementById('metric-errors').textContent = `${Math.floor(Math.random() * 3)} errors`;
+
+        for (const bar of bars) {
+            const h = Math.floor(Math.random() * 70) + 15;
+            bar.style.height = `${h}%`;
+            bar.style.opacity = h / 100 + 0.1;
+            bar.style.borderColor = h > 80 ? '#ef4444' : h > 60 ? '#f59e0b' : '#22c55e';
+        }
+    }, 120);
+}
+
+// --- Terminal ---
+function log(msg, type = 'info') {
+    const div = document.createElement('div');
+    const ts = new Date().toLocaleTimeString('en-GB', { hour12: false });
+    let color = 'text-zinc-400';
+    if (type === 'error') color = 'text-red-500';
+    if (type === 'success') color = 'text-green-500';
+    if (type === 'cmd') color = 'text-white italic';
+    div.innerHTML = `<span class="text-zinc-600 mr-2">[${ts}]</span> <span class="${color}">${msg}</span>`;
+    terminalOutput.appendChild(div);
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+}
+
+function handleCommand(e) {
+    if (e.key !== 'Enter') return;
+    const cmd = cmdInput.value.toLowerCase().trim();
+    cmdInput.value = '';
+    log(`$ ${cmd}`, 'cmd');
+
+    // Blocked verbs
+    const blocked = ['rm -rf', 'drop table', 'delete', 'format', ':(){ :|:& };:'];
+    if (blocked.some(v => cmd.includes(v))) {
+        document.getElementById('violation-cmd').textContent = cmd.split(' ')[0].toUpperCase();
+        document.getElementById('rbac-modal').classList.remove('hidden');
+        log(`Blocked: dangerous command rejected.`, 'error');
+        return;
+    }
+
+    const config = getConfig();
+
+    if (cmd === 'help') {
+        log('Available commands:');
+        log('  run pipeline        — execute full CI pipeline');
+        log('  status              — show pipeline status');
+        log('  project <name>      — switch project (varview-club, custom)');
+        log('  telemetry on|off    — toggle metric stream');
+        log('  config              — show current project config');
+        log('  clear               — clear terminal');
+    } else if (cmd === 'run pipeline') {
+        runPipeline();
+    } else if (cmd === 'status') {
+        const stages = config.pipelineStages;
+        stages.forEach(s => {
+            const st = document.getElementById(`stage-status-${s.id}`);
+            log(`  ${s.icon} ${s.label}: ${st ? st.textContent : 'unknown'}`);
+        });
+    } else if (cmd.startsWith('project ')) {
+        const name = cmd.split(' ')[1];
+        if (HARNESS_CONFIG.projects[name]) {
+            loadProject(name);
+        } else {
+            log(`Unknown project "${name}". Available: ${Object.keys(HARNESS_CONFIG.projects).join(', ')}`, 'error');
+        }
+    } else if (cmd === 'telemetry on') {
+        if (!isTelemetryRunning) toggleTelemetry();
+        else log('Telemetry already running.', 'info');
+    } else if (cmd === 'telemetry off') {
+        if (isTelemetryRunning) toggleTelemetry();
+        else log('Telemetry already stopped.', 'info');
+    } else if (cmd === 'config') {
+        log(`Project: ${config.name} ${config.version}`);
+        log(`Stages: ${config.pipelineStages.map(s => s.label).join(' → ')}`);
+        log(`Modules: ${config.modules.map(m => m.label).join(', ')}`);
+    } else if (cmd === 'clear') {
+        terminalOutput.innerHTML = '';
+    } else {
+        log(`Unknown command: ${cmd}. Type help.`, 'error');
+    }
+}
+
+// --- Helpers ---
+function getConfig() {
+    return HARNESS_CONFIG.projects[currentProject] || HARNESS_CONFIG.projects[HARNESS_CONFIG.defaultProject];
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function closeModal() {
+    document.getElementById('rbac-modal').classList.add('hidden');
+}
+
+// Project selector change
+document.getElementById('project-selector').addEventListener('change', (e) => {
+    loadProject(e.target.value);
+});
+
+// --- Boot ---
+init();
+</script>
+</body>
+</html>

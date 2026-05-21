@@ -1,0 +1,212 @@
+{
+  "fixture_metadata": {
+    "match_id": "barcelona-real-madrid-2026-05-10",
+    "home_team": "Barcelona",
+    "away_team": "Real Madrid",
+    "competition": "La Liga",
+    "fixture_date": "2026-05-10",
+    "venue": "Estadi Olimpic Lluis Companys (Montjuïc)",
+    "title_decider": true,
+    "barcelona_lead_points": 14,
+    "barcelona_last_result": "Osasuna 1-2 Barcelona (May 2, 2026)",
+    "real_madrid_last_result": "Espanyol 0-2 Real Madrid (May 3, 2026)"
+  },
+  "raw_signals": {
+    "weather": [
+      {
+        "title": "Barcelona May Weather - Avg Temp 20C, Light breeze 10-15 km/h",
+        "url": "https://www.yr.no/en/forecast/daily-table/2-3128759/Spain/Catalonia/Barcelona/Barcelona",
+        "snippet": "Barcelona May climate: average temperature 20C, light breeze 10-15 km/h, low precipitation expected. Mediterranean climate with mild evenings.",
+        "query": "Barcelona weather forecast May 2026 precipitation wind"
+      },
+      {
+        "title": "Barcelona playing at Estadi Olimpic Lluis Companys (Montjuic) for 2025-26 season",
+        "url": "https://www.fcbarcelona.com/en",
+        "snippet": "Camp Nou under renovation. Barcelona continues to play home matches at Estadi Olimpic Lluis Companys (Montjuic). Hybrid grass pitch laid specifically for football.",
+        "query": "Barcelona stadium pitch conditions today"
+      },
+      {
+        "title": "Montjuic pitch quality has been a recurring concern this season",
+        "url": "https://www.mundodeportivo.com/en/soccer/20240814/697559/grass-at-montjuic-raising-concerns-nrt.html",
+        "snippet": "Grass at Montjuic raising concerns. The hybrid surface has struggled with consistency due to concerts and other events at the stadium. Barcelona grounds staff working to optimize conditions.",
+        "query": "Barcelona stadium pitch conditions today"
+      }
+    ],
+    "morale_fans": [
+      {
+        "title": "Madrid in turmoil ahead of Clasico",
+        "url": "https://www.thescore.com/esp_fed/news/3536908/turbulence-at-the-bernabeu-madrid-in-turmoil-ahead-of-clasico",
+        "snippet": "Real Madrid in turmoil ahead of El Clasico. Dressing room unrest, fan frustration growing after Xabi Alonso sacking and inconsistent results. Mbappe underperforming since arrival.",
+        "query": "Barcelona vs Real Madrid fan sentiment X reddit"
+      },
+      {
+        "title": "Madrid head into Clasico amid Mbappe criticism, dressing room chaos",
+        "url": "https://punchng.com/madrid-head-into-clasico-amid-mbappe-criticism-dressing-room-chaos/",
+        "snippet": "Madrid head into Clasico amid Mbappe criticism, dressing room chaos. Fans turning on players, 'We want more leaders' campaign emerging at training ground.",
+        "query": "Barcelona vs Real Madrid fan sentiment X reddit"
+      },
+      {
+        "title": "Barcelona forward says El Clasico is 'the least pressure' for players",
+        "url": "https://onefootball.com/en/news/barcelona-forward-says-el-clasico-is-the-least-pressure-for-players-42826623",
+        "snippet": "Barcelona forward says El Clasico is 'the least pressure' for players, highlighting the contrasting comfort and confidence in the Barcelona camp vs the turmoil at Real Madrid.",
+        "query": "Barcelona vs Real Madrid fan sentiment X reddit"
+      },
+      {
+        "title": "Mark Casado: Winning title against Real Madrid would be specially satisfying for fans",
+        "url": "https://tribuna.com/en/news/2026-05-08-mark-casado-it-would-be-particularly-satisfying-for-the-team-and-the-fans-to-win-the-leag/",
+        "snippet": "Barcelona midfielder Mark Casado: 'It would be particularly satisfying for the team and the fans to win the league title against Real Madrid.' High confidence in Barcelona camp.",
+        "query": "Barcelona squad harmony rumours latest"
+      },
+      {
+        "title": "Barcelona take decisive step to secure Hansi Flick's future",
+        "url": "https://onefootball.com/en/news/barcelona-take-decisive-step-to-secure-hansi-flicks-future-42570031",
+        "snippet": "Barcelona take decisive step to secure Hansi Flick's future with contract through 2028. Squad harmony strong, title-winning season, 10-game winning streak.",
+        "query": "Barcelona squad harmony rumours latest"
+      },
+      {
+        "title": "Real Madrid locker room fed up - 'Hope this ends as soon as possible'",
+        "url": "https://www.arizonasportsfans.com/forum/threads/real-madrid-locker-room-fed-up-hope-this-ends-as-soon-as-possible.1292959/",
+        "snippet": "Real Madrid locker room fed up - 'Hope this ends as soon as possible.' Players unhappy with tactical direction, training intensity, and internal atmosphere.",
+        "query": "Real Madrid squad harmony rumours latest"
+      },
+      {
+        "title": "Valverde acknowledges bust-ups with Madrid team-mate Tchouameni after suffering head injury",
+        "url": "https://www.beinsports.com/en-us/soccer/la-liga/articles/valverde-acknowledges-bust-ups-with-madrid-team-mate-tchouameni-after-suffering-head-injury-2026-05-08",
+        "snippet": "Valverde acknowledges bust-ups with Madrid team-mate Tchouameni after suffering head injury in training ground altercation. Dressing room atmosphere described as toxic.",
+        "query": "Real Madrid squad harmony rumours latest"
+      },
+      {
+        "title": "Real Madrid fine Valverde and Tchouameni 500,000 Euro each after training-ground fight",
+        "url": "https://www.hindustantimes.com/sports/football/real-madrid-punish-federico-valverde-and-aurelien-tchouameni-with-500-000-euro-fine-each-after-training-ground-fight-101778258474404.html",
+        "snippet": "Real Madrid fine Valverde and Tchouameni 500,000 Euro each after training-ground fight. Valverde ruled out of El Clasico with head injury. Tchouameni available but psychologically affected.",
+        "query": "Real Madrid squad harmony rumours latest"
+      }
+    ],
+    "manager_pressure": [
+      {
+        "title": "Barcelona take decisive step to secure Hansi Flick's future",
+        "url": "https://onefootball.com/en/news/barcelona-take-decisive-step-to-secure-hansi-flicks-future-42570031",
+        "snippet": "Barcelona take decisive step to secure Hansi Flick's future with contract through 2028. Board fully supportive. No pressure on Flick.",
+        "query": "Barcelona manager sacking pressure news La Liga"
+      },
+      {
+        "title": "Joan Laporta re-elected as FC Barcelona President",
+        "url": "http://www.china.org.cn/world/Off_the_Wire/2026-03/16/content_118384643.shtml",
+        "snippet": "Joan Laporta re-elected as FC Barcelona President for fourth term. Landslide election win provides stability. Laporta has publicly backed Flick as long-term project.",
+        "query": "Barcelona manager sacking pressure news La Liga"
+      },
+      {
+        "title": "Real Madrid outline scenarios for Ancelotti sacking as Alonso pact revealed",
+        "url": "https://m.allfootballapp.com/news/Headline/Real-Madrid-outline-scenarios-for-Ancelotti-sacking-as-Alonso-pact-is-revealed/3749338",
+        "snippet": "Real Madrid outline scenarios for Ancelotti sacking as Xabi Alonso pact is revealed. Board has set internal triggers for dismissal if Clasico result goes badly.",
+        "query": "Real Madrid manager sacking pressure news La Liga"
+      },
+      {
+        "title": "Real Madrid in crisis - inside the conflict and chaos at the Bernabeu",
+        "url": "https://ca.sports.yahoo.com/news/real-madrid-crisis-inside-conflict-143044647.html",
+        "snippet": "Real Madrid in complete crisis. Ancelotti under immense pressure after Xabi Alonso sacking earlier in season. Board considering options. Brazil job waiting for Ancelotti.",
+        "query": "Real Madrid manager sacking pressure news La Liga"
+      },
+      {
+        "title": "Ancelotti 'decides' Real Madrid exit date amid Brazil offer",
+        "url": "https://m.allfootballapp.com/amp/news/La-Liga/Carlo-Ancelotti-'decides'-Real-Madrid-exit-date-amid-Brazil-offer/3842595",
+        "snippet": "Carlo Ancelotti 'decides' Real Madrid exit date amid Brazil national team offer. Ancelotti already has agreement in principle to take over Brazil after club season.",
+        "query": "Real Madrid manager sacking pressure news La Liga"
+      }
+    ],
+    "injuries_squad": [
+      {
+        "title": "Barcelona kick off preparations with everyone available except Lamine Yamal",
+        "url": "https://www.mundodeportivo.com/en/20260506/1004179722/barcelona-kick-off-preparations-for-clasico-with-everyone-available-except-lamine-yamal.html",
+        "snippet": "Barcelona kick off preparations for El Clasico with everyone available except Lamine Yamal. Yamal ruled out with muscle injury. Christensen return delayed as precaution.",
+        "query": "Barcelona team news injuries suspension latest"
+      },
+      {
+        "title": "Barcelona XI vs Real Madrid: Confirmed team news, predicted lineup",
+        "url": "https://uk.sports.yahoo.com/news/barcelona-xi-vs-real-madrid-090245555.html",
+        "snippet": "Barcelona predicted XI: Ter Stegen; Kounde, Cubarsi, Martinez, Balde; Casado, Pedri, Gavi; Ferran, Lewandowski, Raphinha. Yamal and Christensen out. Near full strength otherwise.",
+        "query": "Barcelona team news injuries suspension latest"
+      },
+      {
+        "title": "Three Barcelona stars at risk of missing El Clasico due to suspension threat",
+        "url": "https://onefootball.com/pt-br/noticias/three-barcelona-stars-at-risk-of-missing-el-clasico-vs-real-madrid-duo-to-suspension-42798784",
+        "snippet": "Three Barcelona players on yellow card alert: Gavi, Pedri, and Kounde one booking away from suspension.",
+        "query": "Barcelona team news injuries suspension latest"
+      },
+      {
+        "title": "Federico Valverde Ruled Out Of El Clasico After Head Injury",
+        "url": "https://soccer.realgm.com/wiretap/12227/Federico-Valverde-Ruled-Out-Of-El-Clasico-After-Head-Injury",
+        "snippet": "Federico Valverde ruled out of El Clasico after suffering head injury in training ground altercation with teammate Aurelien Tchouameni. Hospitalised for observation.",
+        "query": "Real Madrid team news injuries suspension latest"
+      },
+      {
+        "title": "Real Madrid confirm seven absences for El Clasico",
+        "url": "https://www.laprensa.hn/deportes/real-madrid-mbappe-vuelve-confirma-siete-bajas-clasico-barcelona-liga-espana-GE30521153",
+        "snippet": "Real Madrid confirm SEVEN absences for El Clasico. Mbappe returns but Valverde, Carvajal, Mendy, Militao, Courtois, and others out. Crisis-level injury list.",
+        "query": "Real Madrid team news injuries suspension latest"
+      },
+      {
+        "title": "Kylian Mbappe recovers from hamstring injury, joins training ahead of El Clasico",
+        "url": "https://www.news18.com/sports/football/kylian-mbappe-recovers-from-hamstring-injury-joins-real-madrid-training-ahead-of-el-clasico-10081634.html",
+        "snippet": "Kylian Mbappe recovers from hamstring injury, joins Real Madrid training ahead of El Clasico. Passed medical tests. Expected to feature but may not be fully match fit.",
+        "query": "Real Madrid team news injuries suspension latest"
+      }
+    ],
+    "travel_congestion": [
+      {
+        "title": "Osasuna 1-2 Barcelona (May 2, 2026)",
+        "url": "https://www.espn.co.uk/football/report/_/gameId/748480",
+        "snippet": "Osasuna 1-2 Barcelona. Ferran Torres and Lewandowski scorers. Barcelona put one hand on LaLiga title with hard-fought win. 14-point lead at top. 10-game winning streak.",
+        "query": "Barcelona last match result score"
+      },
+      {
+        "title": "Espanyol 0-2 Real Madrid (May 3, 2026)",
+        "url": "http://e.espncdn.com/soccer/report/_/gameId/748475",
+        "snippet": "Espanyol 0-2 Real Madrid. Vinicius Junior brace. Real Madrid delay Barcelona's title party, keep slim title hopes alive. Second place, 11 points behind Barcelona.",
+        "query": "Real Madrid last match result score"
+      },
+      {
+        "title": "Real Madrid to Barcelona travel: ~620km, 2h 30min by AVE high-speed train",
+        "url": "https://www.renfe.com",
+        "snippet": "Real Madrid travelling from Madrid to Barcelona for El Clasico. Distance approximately 620km. Expected to travel by high-speed AVE train (approx 2.5 hours). No charter flight needed.",
+        "query": "Real Madrid travel distance to Barcelona"
+      }
+    ],
+    "pitch_quality": [],
+    "match_context": [
+      {
+        "title": "Ferran: 'This is the most special Clasico'",
+        "url": "https://www.fcbarcelona.com/en/football/first-team/news/4500028/ferran-this-is-the-most-special-clasico",
+        "snippet": "The most special Clasico. Title on the line. Barcelona can be champions against their biggest rivals. Ferran Torres: 'This is the most special Clasico I've ever played.'",
+        "query": "Barcelona vs Real Madrid rivalry derby history"
+      },
+      {
+        "title": "How Barcelona can make Clasico history this weekend",
+        "url": "https://www.tntsports.co.uk/football/la-liga/2025-2026/how-barcelona-could-make-clasico-history-real-madrid-title_sto23296291/story.html",
+        "snippet": "Barcelona can make Clasico history by winning the league title at home against their eternal rivals. Would be first time in over a decade Barca seal the title in a Clasico.",
+        "query": "Barcelona vs Real Madrid rivalry derby history"
+      }
+    ]
+  },
+  "qualitative_scores": {
+    "morale": {
+      "home": 0.85,
+      "away": 0.25,
+      "composite": 0.55,
+      "note": "Original score of 0.33 was a flat average masking extreme divergence. Barcelona morale is very high (10-game winning streak, title within reach, squad harmony, Flick contract secured). Real Madrid morale is critically low (dressing room chaos, Valverde-Tchouameni fight, fan unrest, Ancelotti exit looming). Composite is less useful than the split here."
+    },
+    "fatigue": {
+      "home": 0.2,
+      "away": 0.3,
+      "composite": 0.25,
+      "note": "Both teams played once in the past week with 7 days rest until Clasico. Barcelona's win at Osasuna was hard-fought but manageable. Real Madrid's win at Espanyol was comfortable (2-0). Madrid have more injury absences which may reduce physical load on available players but increase burden on starters. Travel for Madrid is moderate (620km, 2.5h AVE train, no significant fatigue factor). Score of 0.25 is validated as reasonable for both."
+    },
+    "pressure": {
+      "home": 0.35,
+      "away": 0.85,
+      "composite": 0.6,
+      "note": "Original score of 0.5 understates the asymmetry. Barcelona have a 14-point lead and can seal the title at home against their biggest rivals, which is a high-opportunity, low-threat scenario (forward player explicitly said 'least pressure'). Real Madrid face existential pressure: Ancelotti's job on the line, board has sacking triggers tied to Clasico result, dressing room in crisis, fans turning on players, and they are 11 points behind with slim title hopes. Away pressure is extreme."
+    },
+    "match_stakes": {
+      "classification": "High-Stakes",
+      "reason": "Title decider El Clasico. Barcelona can win La Liga at home against their

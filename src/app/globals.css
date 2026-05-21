@@ -1,26 +1,275 @@
 @import "tailwindcss";
 
+/*
+ * Impeccable Design System — VARview.club
+ * Inspired by Predigoal (adapted to light background)
+ * Uses OKLCH, 4px baseline, modular type scale, tinted warm neutrals
+ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Background & foreground - warm cream / sovereign navy */
+  --background: oklch(0.94 0.012 75);       /* #f5f0e8 warm cream */
+  --foreground: oklch(0.22 0.025 260);       /* deep navy text */
+
+  /* Brand - sovereign navy */
+  --brand: oklch(0.45 0.18 265);             /* #0052FF sovereign blue */
+  --brand-dark: oklch(0.38 0.2 260);         /* deeper navy */
+  --brand-light: oklch(0.55 0.16 265);       /* lighter brand */
+
+  /* Emerald accent (predigoal-inspired) */
+  --accent-emerald: oklch(0.62 0.18 160);    /* fresh green */
+  --accent-emerald-dark: oklch(0.52 0.2 155);/* deeper green */
+
+  /* Tinted warm neutrals (not pure gray) */
+  --neutral-50: oklch(0.985 0.004 80);
+  --neutral-100: oklch(0.97 0.008 80);
+  --neutral-200: oklch(0.92 0.01 75);
+  --neutral-300: oklch(0.85 0.012 75);
+  --neutral-400: oklch(0.72 0.015 70);       /* was #6B7280 - warmer */
+  --neutral-500: oklch(0.55 0.018 70);       /* was #4B5563 - warmer */
+  --neutral-600: oklch(0.42 0.02 70);        /* was #374151 - warmer */
+  --neutral-700: oklch(0.32 0.022 70);
+  --neutral-800: oklch(0.25 0.025 75);
+  --neutral-900: oklch(0.18 0.025 80);
+
+  /* Cards - warm tinted glass */
+  --card-bg: oklch(0.97 0.006 75 / 0.8);
+  --card-border: oklch(0.85 0.012 75 / 0.5);
+  --card-border-hover: oklch(0.45 0.18 265 / 0.2);
+
+  /* Shadows - tinted with brand */
+  --shadow-sm: 0 1px 3px oklch(0.25 0.025 75 / 0.08);
+  --shadow-md: 0 4px 12px oklch(0.25 0.025 75 / 0.1);
+  --shadow-lg: 0 8px 30px oklch(0.25 0.025 75 / 0.12);
+  --shadow-glow-brand: 0 0 20px oklch(0.45 0.18 265 / 0.15);
+  --shadow-glow-emerald: 0 0 20px oklch(0.62 0.18 160 / 0.2);
+
+  /* Easing - impeccable: no linear, no bounce */
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+
+  /* Modular type scale (1.25 ratio) - 4px grid */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.25rem;    /* 20px */
+  --text-xl: 1.5rem;     /* 24px */
+  --text-2xl: 1.875rem;  /* 30px */
+  --text-3xl: 2.5rem;    /* 40px */
+  --text-4xl: 3rem;      /* 48px */
+  --text-5xl: 4rem;      /* 64px */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-light: var(--brand-light);
+  --color-emerald-accent: var(--accent-emerald);
+  --color-emerald-dark: var(--accent-emerald-dark);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Tinted neutrals */
+  --color-neutral-50: var(--neutral-50);
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-200: var(--neutral-200);
+  --color-neutral-300: var(--neutral-300);
+  --color-neutral-400: var(--neutral-400);
+  --color-neutral-500: var(--neutral-500);
+  --color-neutral-600: var(--neutral-600);
+  --color-neutral-700: var(--neutral-700);
+  --color-neutral-800: var(--neutral-800);
+  --color-neutral-900: var(--neutral-900);
+
+  /* Card */
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+
+  /* Font */
+  --font-sans: var(--font-space-grotesk);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Spacing - 4px grid */
+  --spacing-unit: 4px;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+}
+
+/* ===== Premium Card ===== */
+
+.card-premium {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  transition: all 0.35s var(--ease-out-quart);
+}
+
+.card-premium:hover {
+  border-color: var(--card-border-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ===== CTA Button (predigoal 3D style) ===== */
+
+.btn-3d {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s var(--ease-out-expo);
+  position: relative;
+}
+
+.btn-3d:active {
+  transform: translateY(2px);
+}
+
+.btn-3d-primary {
+  background: var(--brand);
+  color: oklch(0.99 0 0);
+  box-shadow: 0 4px 0 oklch(0.35 0.18 260), 0 6px 16px oklch(0.45 0.18 265 / 0.25);
+}
+
+.btn-3d-primary:hover {
+  background: var(--brand-dark);
+  box-shadow: 0 3px 0 oklch(0.3 0.18 260), 0 8px 24px oklch(0.45 0.18 265 / 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-3d-primary:active {
+  box-shadow: 0 1px 0 oklch(0.35 0.18 260);
+}
+
+.btn-3d-emerald {
+  background: var(--accent-emerald);
+  color: oklch(0.99 0 0);
+  box-shadow: 0 4px 0 var(--accent-emerald-dark), 0 6px 16px oklch(0.62 0.18 160 / 0.3);
+}
+
+.btn-3d-emerald:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 3px 0 var(--accent-emerald-dark), 0 8px 24px oklch(0.62 0.18 160 / 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-3d-emerald:active {
+  box-shadow: 0 1px 0 var(--accent-emerald-dark);
+}
+
+.btn-3d-outline {
+  background: transparent;
+  color: var(--foreground);
+  border: 1.5px solid var(--neutral-300);
+  box-shadow: 0 2px 0 var(--neutral-300);
+}
+
+.btn-3d-outline:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+  box-shadow: 0 2px 0 var(--brand);
+  transform: translateY(-1px);
+}
+
+/* ===== Custom scrollbar ===== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--neutral-200);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--neutral-300);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-400);
+}
+
+/* ===== Animations ===== */
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px oklch(0.45 0.18 265 / 0.1); }
+  50% { box-shadow: 0 0 40px oklch(0.45 0.18 265 / 0.2); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s var(--ease-in-out-expo) infinite;
+}
+
+/* CTA glow (emerald - predigoal style) */
+@keyframes cta-glow {
+  0%, 100% { box-shadow: 0 0 16px oklch(0.62 0.18 160 / 0.25), 0 0 32px oklch(0.62 0.18 160 / 0.08); }
+  50% { box-shadow: 0 0 24px oklch(0.62 0.18 160 / 0.45), 0 0 48px oklch(0.62 0.18 160 / 0.15); }
+}
+
+.animate-cta-glow {
+  animation: cta-glow 3s var(--ease-in-out-expo) infinite;
+}
+
+/* Shimmer sweep (predigoal style) */
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%) rotate(18deg); }
+  30%, 100% { transform: translateX(250%) rotate(18deg); }
+}
+
+.animate-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, oklch(1 0 0 / 0.12), transparent);
+  animation: shimmer-sweep 4s var(--ease-in-out-expo) infinite;
+  pointer-events: none;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+.animate-float {
+  animation: float 6s var(--ease-in-out-expo) infinite;
+}
+
+/* Card glow pulse */
+@keyframes card-glow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+/* Marquee pause on hover */
+.group:hover .group-hover\:pause {
+  animation-play-state: paused;
+}
+
+/* Tinted neutral text classes (contrast-optimized for warm cream bg) */
+.text-neutral-400 { color: var(--neutral-400); }
+.text-neutral-500 { color: var(--neutral-500); }
+.text-neutral-600 { color: var(--neutral-600); }
+
+/* ===== Animated Background ===== */
+
+@keyframes slow-zoom {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.08);
+  }
+}
+
+.animate-slow-zoom {
+  animation: slow-zoom 25s ease-in-out infinite alternate;
 }

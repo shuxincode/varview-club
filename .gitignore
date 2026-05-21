@@ -36,6 +36,54 @@ yarn-error.log*
 # vercel
 .vercel
 
+# secrets
+keys.json
+*.key
+
+# local debug / temp files
+*.log
+*.txt
+out.txt
+build_output.txt
+stderr.txt
+stdout.txt
+
+# prediction-engine python cache
+prediction-engine/app/__pycache__/
+prediction-engine/app/**/__pycache__/
+*.pyc
+
+# e2e screenshots (regenerated each run)
+e2e/*.png
+screenshots/*.png
+public/screenshots/*.png
+playwright-audit/*.png
+playwright-audit/*.pdf
+
+# harness runtime
+/harness/config.local.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# docker
+.dockerignore
+Dockerfile
+docker-compose.yml
+/install-docker.sh
+prediction-engine/Dockerfile
+prediction-engine/requirements.txt
+start-engine.ps1
+
+# python venv
+__pycache__/
+*.pyc
+*.pyo
+
+# debug output
+/check_stripe.py
+/scrape_predigoal.py
+/predigoal-screenshot.png
+/soft_signal_report.json
+/varview_archive.duckdb.wal
