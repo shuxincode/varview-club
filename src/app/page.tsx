@@ -16,6 +16,8 @@ import {
   Zap,
   Sigma,
   CheckCircle,
+  MessageCircle,
+  Lock,
 } from 'lucide-react';
 
 const easeOutExpo = [0.19, 1, 0.22, 1] as const;
@@ -37,6 +39,18 @@ const stagger = {
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [buying, setBuying] = useState(false);
+
+  async function handleBuy() {
+    setBuying(true);
+    try {
+      const res = await fetch('/api/checkout', { method: 'POST' });
+      const { url } = await res.json();
+      if (url) window.location.href = url;
+    } catch {
+      setBuying(false);
+    }
+  }
 
   return (
     <div className="min-h-screen">
@@ -282,7 +296,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Pricing CTA ── */}
+      {/* ── Telegram Access CTA ── */}
       <motion.section
         initial="hidden"
         whileInView="visible"
@@ -293,19 +307,31 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           <motion.div variants={fadeUp} custom={0} className="max-w-xl">
             <h2 className="text-[clamp(1.5rem,3.5vw,2.5rem)] font-bold text-[oklch(0.22_0.025_260)] mb-3 tracking-tight">
-              Ready to <span className="text-[oklch(0.45_0.18_265)]">Predict</span>?
+              Chairman's Picks on{' '}
+              <span className="text-[oklch(0.45_0.18_265)]">Telegram</span>
             </h2>
             <p className="text-[oklch(0.55_0.018_70)] mb-8 text-lg">
-              Choose the plan that fits your needs.
+              One-time payment. Lifetime access. The Chairman's over-4.5 goal outliers delivered directly to your DM.
             </p>
           </motion.div>
-          <motion.div variants={fadeUp} custom={2}>
-            <Link href="/pricing">
-              <Button size="lg" variant="emerald">
-                View Plans
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            </Link>
+          <motion.div variants={fadeUp} custom={2} className="flex items-center gap-4 flex-wrap">
+            <Button
+              size="lg"
+              variant="emerald"
+              onClick={handleBuy}
+              disabled={buying}
+            >
+              {buying ? 'Opening Stripe...' : (
+                <>
+                  Get Access — $89
+                  <MessageCircle className="h-4 w-4 ml-2" />
+                </>
+              )}
+            </Button>
+            <div className="flex items-center gap-2 text-xs text-[oklch(0.55_0.018_70)]">
+              <Lock className="h-3 w-3" />
+              <span>Secure payment via Stripe</span>
+            </div>
           </motion.div>
         </div>
       </motion.section>

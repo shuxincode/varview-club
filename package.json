@@ -6,7 +6,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "set-webhook": "tsx scripts/set-telegram-webhook.ts",
+    "broadcast": "tsx scripts/broadcast.ts"
   },
   "dependencies": {
     "@fontsource/space-grotesk": "^5.2.10",
@@ -34,6 +36,7 @@
     "eslint-config-next": "16.2.6",
     "playwright": "^1.59.1",
     "tailwindcss": "^4",
+    "tsx": "^4.19.0",
     "typescript": "^5"
   }
 }

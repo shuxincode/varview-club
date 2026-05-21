@@ -1,6 +1,5 @@
-// Stripe integration is no longer used. All features are now unrestricted.
-// This file is kept as a stub to avoid import errors in legacy code.
+import Stripe from 'stripe';
 
-export function getStripe(): never {
-  throw new Error('Stripe is no longer configured. All features are unrestricted.');
-}
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2026-04-22.dahlia',
+});
